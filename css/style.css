@@ -1,15 +1,4 @@
-@font-face {
-  font-family: roboto;
-  src: url("/css/fonts/fontawesome-webfont.ttf") format("truetype");
-  font-weight: 300; }
-@font-face {
-  font-family: roboto;
-  src: url("/css/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
-  font-weight: normal; }
-@font-face {
-  font-family: roboto;
-  src: url("/css/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
-  font-weight: 700; }
+
 body {
   font-family: sans-serif;
   font-family: roboto;
