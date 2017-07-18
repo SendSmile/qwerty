@@ -790,12 +790,12 @@ table.gc-bubbleDefault, .gc-bubbleDefault table {
       margin: 0; }
       .header .tabs ul > li {
         position: relative;
-        border-left: 1px solid #0b6e74;
+        border-left: 1px solid #red;
         border-right: 1px solid #06393b;
         font-weight: bold;
         text-transform: uppercase;
-        font-size: 14px;
-        text-shadow: 0 1px 1px #06393b;
+        font-size: 17px;
+        text-shadow: 0 2px 2px #06393b;
         display: table-cell; }
         .header .tabs ul > li .beta {
           color: #e39706;
@@ -4143,3 +4143,8 @@ body.feature.home .footer {
   max-width: 1100px; }
 
 /*# sourceMappingURL=style.css.map */
+
+
+
+
+
