@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<title>RoboBOT Домашняя версия</title>
+	<meta charset="UTF-8">
+	<meta property="og:image" content="http://poloniex.com/images/poloniex_icon.png" />
+	<meta name="format-detection" content="telephone=no">
+	<link rel="shortcut icon" href="/favicon.ico" />
+
+
+	<!-- Путь к файлу на локалке и на сервере разный, поэтому нужно на локалке добавлять / ,а на сервере убирать   -->
+
+
+
+	<link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+	<link rel="stylesheet" type="text/css" media="print" href="css/style.css" />
+
+	<!--
+	<script src="js/jquery-2.1.3.min.js" type="text/javascript"></script>
+	<script src="js/jquery.qtip.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/normalize.min.css" />
+-->
+
+</head>
+
+<body class="exchange expandAlert loggedOut">
+	<div class="wrapper">
+		<div id="resolutionAlert" class="headerAlert dismissed" data-id="-1">
+			<div class="close"><a href="javascript:void(0);" title="Dismiss"><i class="fa fa-times-circle"></i></a></div>
+			<div class="msg">We've detected that you're using a small display. Want to switch to the <a href="?app=mobile" class="standard switchLink">mobile&nbsp;version</a> of the site?</div>
+		</div>
+
+
+		<div class="header">
+			<div class="logo">
+				<a href="#"><img src="img/poloniex.png" alt="Poloniex Digital Asset Exchange" /></a>
+			</div>
+
+			<div class="tabs">
+				<ul>
+					<li class='active'><a href="#">Exchange</a></li>
+					<li><a href="#">Margin Trading</a></li>
+					<li><a href="#">Lending</a></li>
+				</ul>
+			</div>
+
+
+
+
+			<div class="tabs right loggedOut">
+				<ul>
+					<li class="message">
+						<span class="title"><a href="/login">Sign in </a> or <a href="/signup">Create an Account</a><span class="desktopNav"> </span></span>
+					</li>
+
+
+					<li class="icon alerts dismissed inactive notice" id="alertsTab">
+						<span class="title"><i class="fa fa-bell-o" aria-hidden="true"></i></span>
+						<ul>
+							<li class="alert">
+								<div class="head">NOTICE:</div>
+								<div class="dismiss"><i class="fa fa-bell-slash"></i> <span>Dismiss this Alert</span></div>
+								<div class="msg">There are no new alerts</div>
+								<div class="date">Posted by busoni@poloniex on 2017-02-25 22:56:57</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="progressDiv" id="progressDiv">
+			<div class="imgDiv"></div>
+		</div>
+		<div class="alertDiv" id="logoutWarning">
+			<div class="message">
+				<h2>Logged Out</h2>Your session has expired or you have signed&nbsp;out from another window.
+				<p>Please <a href="/login" class="standard">sign in to trade</a> or press OK continue.</p>
+			</div>
+			<div class="action"><button class="theButton" onClick="window.location.reload();">OK</button></div>
+		</div>
+		<div class="alertDiv" id="alertDiv">
+			<div class="message">
+				<div id="result"></div>
+			</div>
+			<div class="action"><button class="theButton" id="alertDivOK" onClick="hideAlert();">OK</button></div>
+		</div>
+		<div class="alertDiv" id="stopLimitAlertDiv">
+			<div class="message">
+				<div id="stopLimitAlertText"></div>
+			</div>
+			<div class="action">
+				<button class="theButton" onClick="submitStopLimitOrder();">Submit</button>
+				<button class="theButton" onClick="hideStopLimitAlert();">Cancel</button>
+			</div>
+		</div>
+		<div class="alertDiv" id="confirmDiv">
+			<div class="message">
+				<div id="confirmDivMessage"></div>
+			</div>
+			<div class="action">
+				<button class="theButton" id="confirmDivOK">OK</button>
+				<button class="theButton" id="confirmDivCancel">Cancel</button>
+			</div>
+		</div>
+		<div class="alertDiv" id="twoFaDiv">
+			<div class="message">
+				<h2 id="twoFaAlertHeader">Confirm Withdrawal</h2>
+				<span id="twoFaAlertText">Please enter your six-digit Google Authenticator code.</span>
+				<span id="twoFaAlertError">Invalid 2FA code.</span>
+			</div>
+			<input class="userPassInput" id="twoFaCode" type="text" onkeydown="if (event.keyCode == 13)$('#twoFaSubmitButton').click()" />
+			<div class="action">
+				<button class="theButton" id="twoFaCancelButton" onclick="hide2faAlert()">Cancel</button>
+				<button class="theButton" id="twoFaSubmitButton" onclick="showProgressBar();withdraw(0);">Submit</button>
+			</div>
+		</div>
+		<div class="dimmer" id="dimmer"></div>
+
+
+		<div id="content">
+			<!-- BEGIN CONTENT AREA -->
+
+
+			<div class="main">
+
+
+				<div class="marketDepth">
+					<div class="head">
+						<div class="name">Market Depth</div>
+						<div class="caret"><i class="fa fa-chevron-up"></i><i class="fa fa-chevron-down"></i></div>
+					</div>
+					<div class="chart" id="depthChartContainer">
+						<div id="depthChartDot"><i class="fa fa-circle"></i></div>
+						<div id="depthChartYline"></div>
+						<div class="chartInfoDiv" id="depthChartInfo"></div>
+						<canvas id="depthCanvas"></canvas>
+					</div>
+				</div>
+
+				<div class="openOrders mainBox loginRequired">
+					<div class="head">
+						<div class="name">My Open Orders</div>
+					</div>
+					<div class="data"></div>
+				</div>
+
+				<div class="tradeHistory mainBox">
+					<div class="head">
+						<div class="name">Trade History</div>
+						<ul class="button-group loginRequired">
+							<li><button class="button active" id="marketTradeHistoryButton">Market Trades</button></li>
+							<li><button class="button" id="userTradeHistoryButton">My Trades</button></li>
+						</ul>
+					</div>
+					<div class="data marketTrades"></div>
+					<div class="data myTrades"></div>
+				</div>
+
+			</div>
+
+			<div class="side">
+
+				<div class="box markets exchangeMarkets" id="marketsContainer">
+
+					<div id="marketTables">
+
+						<div class="tableHead">
+							<ul class="tabs">
+								<li id="baseTabBTC" data-url="containerBTC">BTC</li>
+								<li id="baseTabETH" data-url="containerETH">ETH</li>
+								<li id="baseTabXMR" data-url="containerXMR">XMR</li>
+								<li id="baseTabUSDT" data-url="containerUSDT">USDT</li>
+							</ul>
+
+							<div class="tools">
+								<i class="fa fa-cog"></i>
+							</div>
+							<div class="toolPanel">
+								<div class="notch"></div>
+								<div class="title">Market Settings</div>
+								<div class="settingsRow rowSettings">
+									<ul class="button-group" id="rowButtons">
+										<li style="width: 20%;"><button class="button show show5">5</button></li>
+										<li style="width: 20%;"><button class="button show show10">10</button></li>
+										<li style="width: 20%;"><button class="button show show20">20</button></li>
+										<li style="width: 20%;"><button class="button show show30">30</button></li>
+										<li style="width: 20%;"><button class="button show showALL">ALL</button></li>
+									</ul>
+									<div class="desc">Rows to Display:</div>
+								</div>
+								<div class="settingsRow colSettings">
+									<ul class="button-group" id="colButtons">
+										<li class="showName"><button class="button showName" data-url="Name">Name</button></li>
+										<li class="showBalance"><button class="button showBalance" data-url="Balance">Balance</button></li>
+										<li class="showValue"><button class="button showValue" data-url="Value">Est. Value</button></li>
+									</ul>
+									<div class="desc">Right Column:</div>
+								</div>
+								<div class="settingsRow starSettings">
+									<ul class="button-group" id="starAllButtons">
+										<li class="starAll"><button class="button" data-url="starAll">All</button></li>
+										<li class="starMine"><button class="button" data-url="starMine">My Balance</button></li>
+										<li class="starNone"><button class="button" data-url="starNone">None</button></li>
+									</ul>
+									<div class="desc">Quick <i class="fa fa-star"></i> Select:</div>
+								</div>
+							</div>
+						</div>
+
+						<section id="containerBTC" class="marketContainer">
+							<table id="marketBTC">
+								<thead>
+									<tr>
+										<th class="star"><i class="fa fa-star"></i></th>
+										<th class="coin">Coin <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Price <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Volume <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Change <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Name <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My Balance <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My BTC Value <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</section>
+
+						<section id="containerETH" class="marketContainer">
+							<table id="marketETH" class="market">
+								<thead>
+									<tr>
+										<th class="star"><i class="fa fa-star"></i></th>
+										<th class="coin">Coin <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Price <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Volume <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Change <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Name <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My Balance <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My ETH Value <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</section>
+
+						<section id="containerXMR" class="marketContainer">
+							<table id="marketXMR" class="market">
+								<thead>
+									<tr>
+										<th class="star"><i class="fa fa-star"></i></th>
+										<th class="coin">Coin <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Price <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Volume <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Change <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Name <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My Balance <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My XMR Value <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</section>
+
+						<section id="containerUSDT" class="marketContainer">
+							<table id="marketUSDT" class="market">
+								<thead>
+									<tr>
+										<th class="star"><i class="fa fa-star"></i></th>
+										<th>Coin <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Price <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Volume <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Change <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>Name <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My Balance <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+										<th>My USDT Value <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</section>
+
+						<div id="marketFilterMessage" class="darken">Table data filtered.
+							<div class="matchlink resetFilters">Clear filters</div>.</div>
+					</div>
+				</div>
+
+
+				<div class="box notices">
+					<div class="head">
+
+					</div>
+				</div>
+
+			</div>
+			<!-- Путь к файлу на локалке и на сервере разный, поэтому нужно на локалке добавлять / ,а на сервере убирать   
+           
+           
+            <script src="js/autobahn.min.js" type="text/javascript"></script>
+            <script src="js/jquery-ui.min.js" type="text/javascript"></script>
+            <script src="js/jquery.ui.touch-punch.min.js"></script>
+            <script src="js/plx_candlestick.js?v=060816" type="text/javascript"></script>
+            <script src="js/plx_jquery.dataTables.min.js" type="text/javascript"></script>
+            <script src="js/jquery.mousewheel.js" type="text/javascript"></script>
+            <script src="js/jquery.jscrollpane.min.js" type="text/javascript"></script>
+            <script src="js/plx_commonFunctions.js?v=060617" type="text/javascript"></script>
+            <script src="js/plx_exchage.js?v=062617" type="text/javascript"></script>
+            <script src="js/plx_charts.js?v=062016"></script>
+            <script src="js/plx_marketTables.js?v=060916"></script>
+            
+            
+            -->
+
+		</div>
+		<div class="footer">
+
+			<div class="links noWrap">
+
+			</div>
+
+			<div class="meta">
+				<div class="group">
+					<img src="img/poloniex.png" alt="Poloniex Digital Asset Exchange" />
+
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+</body>
+
+</html>
