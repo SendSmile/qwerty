@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
 	<title>RoboBOT Домашняя версия</title>
 	<meta charset="UTF-8">
@@ -10,59 +11,36 @@
 
 	<!-- Путь к файлу на локалке и на сервере разный, поэтому нужно на локалке добавлять / ,а на сервере убирать   -->
 
-	<link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 
 <body class="exchange expandAlert loggedOut">
-	<div class="wrapper">
-		<div class="header">
-		</div>
-		<div id="content">
-			<div class="main">
-				<div class="marketDepth">
-					<div class="head">
-						<div class="name">Market Depth</div>
-						<div class="caret"><i class="fa fa-chevron-up"></i><i class="fa fa-chevron-down"></i></div>
-					</div>
-					<div class="chart" id="depthChartContainer">
-						<div id="depthChartDot"><i class="fa fa-circle"></i></div>
-						<div id="depthChartYline"></div>
-						<div class="chartInfoDiv" id="depthChartInfo"></div>
-						<canvas id="depthCanvas"></canvas>
-					</div>
+	<div id="content" class="wrapper">
+		<div class="main">
+			<div class="marketDepth">
+				<div class="head name">Market Depth</div>
+				<div class="chart" id="depthChartContainer">
+					<canvas id="depthCanvas"></canvas>
 				</div>
-
-				<div class="tradeHistory mainBox">
-					<div class="head">
-						<div class="name">Trade History</div>
-						<ul class="button-group loginRequired">
-							<li><button class="button active" id="marketTradeHistoryButton">Market Trades</button></li>
-							<li><button class="button" id="userTradeHistoryButton">My Trades</button></li>
+			</div>
+			<div class="tradeHistory mainBox">
+				<div class="name head">Trade History</div>
+				<div class="data marketTrades"></div>
+			</div>
+		</div>
+		<div class="side">
+			<div class="box markets exchangeMarkets" id="marketsContainer">
+				<div id="marketTables">
+					<div class="tableHead">
+						<ul class="tabs">
+							<li id="baseTabBTC" data-url="containerBTC">BTC</li>
+							<li id="baseTabETH" data-url="containerETH">ETH</li>
+							<li id="baseTabXMR" data-url="containerXMR">XMR</li>
+							<li id="baseTabUSDT" data-url="containerUSDT">USDT</li>
 						</ul>
 					</div>
-					<div class="data marketTrades"></div>
-					<div class="data myTrades"></div>
 				</div>
 			</div>
-
-			<div class="side">
-				<div class="box markets exchangeMarkets" id="marketsContainer">
-					<div id="marketTables">
-						<div class="tableHead">
-							<ul class="tabs">
-								<li id="baseTabBTC" data-url="containerBTC">BTC</li>
-								<li id="baseTabETH" data-url="containerETH">ETH</li>
-								<li id="baseTabXMR" data-url="containerXMR">XMR</li>
-								<li id="baseTabUSDT" data-url="containerUSDT">USDT</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="footer">
 		</div>
 	</div>
 </body>
